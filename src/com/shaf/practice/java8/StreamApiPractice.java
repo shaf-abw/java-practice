@@ -184,7 +184,7 @@ public class StreamApiPractice {
 
     private static void mergeIntArrays(int[] i, int[] j) {
 
-        int[] mergedIntArray = IntStream.concat(Arrays.stream(i), Arrays.stream(j))
+            int[] mergedIntArray = IntStream.concat(Arrays.stream(i), Arrays.stream(j))
                 .distinct()
                 .sorted()
                 .toArray();
@@ -261,10 +261,10 @@ public class StreamApiPractice {
         students.add(new Student(1, "Student 4", 250.40));
 
         List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee("John", 30, "MALE", 50000));
-        employees.add(new Employee("Jane", 25, "FEMALE", 60000));
-        employees.add(new Employee("Jake", 30, "MALE", 45000));
-        employees.add(new Employee("Jill", 25, "FEMALE", 65000));
+        employees.add(new Employee("John", 30, "MALE", 50000, "IT"));
+        employees.add(new Employee("Jane", 25, "FEMALE", 60000, "IT"));
+        employees.add(new Employee("Jake", 30, "MALE", 45000, "HR"));
+        employees.add(new Employee("Jill", 25, "FEMALE", 65000, "FINANCE"));
 
         averageOfIntList(nums);
         uppercaseOfStringList(colors);
@@ -285,6 +285,7 @@ public class StreamApiPractice {
 
         removeDuplicateFromString(shaf);
         employeeSortByAgeAndSalary(employees);
+        getHighestPaidEmpByEachDept(employees);
 
         mergeIntArrays(i, j);
         mergeStringArray(a, b);
@@ -335,6 +336,20 @@ public class StreamApiPractice {
         Arrays.stream(z).forEach(System.out::print);
     }
 
+    private static void getHighestPaidEmpByEachDept(List<Employee> employees) {
+
+        Map<String, Optional<Employee>> highestPaidEmployees = new HashMap<>();
+
+        highestPaidEmployees = employees.stream()
+                .collect(
+                        Collectors.groupingBy(Employee::getDept, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
+
+
+        highestPaidEmployees.forEach((dept, emp) ->
+                System.out.println(dept + " -> " + emp.orElse(null))
+        );
+    }
+
     private static void findTwoSum(int[] arr, int target) {
 
         Map<Integer, Integer> map = new HashMap<>();
@@ -375,14 +390,16 @@ class Employee {
     private int age;
     private String gender;
     private double salary;
+    private String dept;
 
     // Constructor, getters, and toString method
 
-    public Employee(String name, int age, String gender, double salary) {
+    public Employee(String name, int age, String gender, double salary, String dept) {
         this.name = name;
         this.age = age;
         this.gender = gender;
         this.salary = salary;
+        this.dept = dept;
     }
 
     public String getName() {
@@ -401,9 +418,11 @@ class Employee {
         return salary;
     }
 
+    public String getDept() { return dept; };
+
     @Override
     public String toString() {
-        return "Employee{name='" + name + "', age=" + age + ", gender=" + gender + ", salary=" + salary + '}';
+        return "Employee{name='" + name + "', age=" + age + ", gender=" + gender + ", salary=" + salary + ", dept=" + dept + '}';
     }
 
     @Override
